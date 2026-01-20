@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Parking Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<style>
+    :root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --gray-color: #95a5a6;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: var(--dark-color);
+    line-height: 1.6;
+}
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+    color: var(--dark-color);
+    font-size: 28px;
+}
+
+header h1 i {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+nav button {
+    background: none;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+nav button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+nav button:not(.active):hover {
+    background-color: var(--light-color);
+}
+
+.logout-btn {
+    background-color: var(--danger-color) !important;
+    color: white !important;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b !important;
+}
+
+.view-container {
+    display: none;
+}
+
+.view-container.active {
+    display: block;
+}
+
+/* Auth Styles */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--light-color);
+}
+
+.auth-form {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-form h1 {
+    margin-bottom: 20px;
+    color: var(--dark-color);
+}
+
+.auth-form h2 {
+    margin-bottom: 20px;
+    color: var(--dark-color);
+}
+
+.auth-toggle {
+    margin-top: 15px;
+    color: var(--gray-color);
+}
+
+.auth-toggle a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.auth-toggle a:hover {
+    text-decoration: underline;
+}
+
+.hidden {
+    display: none;
+}
+
+/* User View Styles */
+.user-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.action-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.action-card h2 {
+    margin-bottom: 15px;
+    color: var(--dark-color);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.action-card h2 i {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.input-group input, 
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+button {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    width: 100%;
+}
+
+.primary-btn:hover {
+    background-color: #2980b9;
+}
+
+.secondary-btn {
+    background-color: white;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.secondary-btn:hover {
+    background-color: var(--light-color);
+}
+
+.reservations-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.reservation-item {
+    background: var(--light-color);
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reservation-item .reservation-info {
+    flex: 1;
+}
+
+.reservation-item .reservation-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.reservation-item button {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.parking-display {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.availability-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filter-btn {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filter-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.parking-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.parking-spot {
+    border: 2px solid;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.parking-spot:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.parking-spot.available {
+    border-color: var(--secondary-color);
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.parking-spot.reserved {
+    border-color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+.parking-spot.occupied {
+    border-color: var(--danger-color);
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.parking-spot.disabled {
+    border-color: var(--gray-color);
+    background-color: rgba(149, 165, 166, 0.1);
+    cursor: not-allowed;
+}
+
+.spot-number {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.spot-status {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.spot-info {
+    font-size: 11px;
+    color: var(--gray-color);
+}
+
+/* Admin View Styles */
+.admin-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.control-panel, .stats-panel {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.stats-panel h2 {
+    margin-bottom: 15px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-item span:last-child {
+    font-weight: 600;
+}
+
+.admin-tables {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.table-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: var(--light-color);
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--gray-color);
+}
+
+.close-btn:hover {
+    color: var(--dark-color);
+}
+
+.payment-section {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: var(--light-color);
+    border-radius: 6px;
+}
+
+.price-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 20px 0;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.location-selector {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.location-selector h3 {
+    margin-bottom: 10px;
+    color: var(--dark-color);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    nav {
+        margin-top: 15px;
+        width: 100%;
+    }
+    
+    nav button {
+        width: 48%;
+        margin: 1%;
+    }
+    
+    .parking-map {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .admin-tables {
+        grid-template-columns: 1fr;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+</style>
+<body>
+    <div id="authContainer" class="auth-container">
+        <div class="auth-form">
+            <h1><i class="fas fa-parking"></i> Smart Parking PMS</h1>
+            <div id="loginForm">
+                <h2>Login</h2>
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                <button class="primary-btn" onclick="login()">Login</button>
+                <p class="auth-toggle">Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+            </div>
+            <div id="signupForm" class="hidden">
+                <h2>Sign Up</h2>
+                <div class="input-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name">
+                </div>
+                <div class="input-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email">
+                </div>
+                <div class="input-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password">
+                </div>
+                <div class="input-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm your password">
+                </div>
+                <button class="primary-btn" onclick="signup()">Sign Up</button>
+                <p class="auth-toggle">Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appContainer" class="container hidden">
+        <header>
+            <h1><i class="fas fa-parking"></i> Smart Parking PMS</h1>
+            <nav>
+                <button id="userViewBtn" class="active">User View</button>
+                <button id="adminViewBtn">Admin View</button>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </nav>
+        </header>
+
+        <!-- User View -->
+        <div id="userView" class="view-container">
+            <div class="location-selector">
+                <h3><i class="fas fa-map-marker-alt"></i> Select Location</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="citySelect">City</label>
+                        <select id="citySelect" onchange="loadSubAreas()">
+                            <option value="">-- Select a city --</option>
+                            <option value="hyderabad">Hyderabad</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="delhi">Delhi</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="subAreaSelect">Sub Area</label>
+                        <select id="subAreaSelect" disabled>
+                            <option value="">-- Select a sub area --</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="primary-btn" onclick="loadParkingForLocation()" style="margin-top: 10px;">Load Parking</button>
+            </div>
+
+            <div class="user-actions">
+                <div class="action-card">
+                    <h2><i class="fas fa-search"></i> Find Parking</h2>
+                    <div class="input-group">
+                        <label for="reservationDate">Date</label>
+                        <input type="date" id="reservationDate">
+                    </div>
+                    <div class="input-group">
+                        <label for="reservationTime">Time</label>
+                        <input type="time" id="reservationTime">
+                    </div>
+                    <div class="input-group">
+                        <label for="duration">Duration (hours)</label>
+                        <select id="duration">
+                            <option value="1">1 hour</option>
+                            <option value="2">2 hours</option>
+                            <option value="4">4 hours</option>
+                            <option value="8">8 hours</option>
+                            <option value="24">All day</option>
+                        </select>
+                    </div>
+                    <button class="primary-btn" onclick="findParking()">Find Available Spots</button>
+                </div>
+
+                <div class="action-card">
+                    <h2><i class="fas fa-calendar-check"></i> My Reservations</h2>
+                    <div id="userReservations" class="reservations-list">
+                        <!-- Reservations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="parking-display">
+                <h2>Parking Availability <span id="currentDateTime"></span></h2>
+                <div class="availability-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="available">Available</button>
+                    <button class="filter-btn" data-filter="reserved">Reserved</button>
+                </div>
+                <div id="parkingMap" class="parking-map">
+                    <!-- Parking map will be generated here -->
+                    <p id="noLocationSelected" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                        Please select a city and sub area to view parking spots
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="adminView" class="view-container hidden">
+            <div class="admin-controls">
+                <div class="control-panel">
+                    <h2><i class="fas fa-cog"></i> Parking Management</h2>
+                    <button class="secondary-btn" onclick="markSpotAsOccupied()">Mark Spot as Occupied</button>
+                    <button class="secondary-btn" onclick="markSpotAsAvailable()">Mark Spot as Available</button>
+                    <button class="secondary-btn" onclick="overrideReservation()">Override Reservation</button>
+                </div>
+
+                <div class="stats-panel">
+                    <h2><i class="fas fa-chart-bar"></i> Real-time Stats</h2>
+                    <div class="stat-item">
+                        <span>Total Capacity:</span>
+                        <span id="totalCapacity">100</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Available:</span>
+                        <span id="adminAvailable">75</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Reserved:</span>
+                        <span id="reservedCount">15</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Occupied:</span>
+                        <span id="occupiedCount">10</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Revenue Today:</span>
+                        <span id="revenueToday">₹350.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-tables">
+                <div class="table-container">
+                    <h3>Current Reservations</h3>
+                    <table id="reservationsTable">
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Spot #</th>
+                                <th>License Plate</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Reservations will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-container">
+                    <h3>Parking Activity Log</h3>
+                    <table id="activityLogTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Location</th>
+                                <th>Spot #</th>
+                                <th>Action</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Activity log will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="reservationModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal('reservationModal')">&times;</span>
+                <h2>Reserve Parking Spot</h2>
+                <div id="reservationDetails">
+                    <!-- Reservation details will be loaded here -->
+                </div>
+                <div class="input-group">
+                    <label for="licensePlate">License Plate</label>
+                    <input type="text" id="licensePlate" placeholder="Enter license plate">
+                </div>
+                <div class="input-group">
+                    <label for="vehicleType">Vehicle Type</label>
+                    <select id="vehicleType">
+                        <option value="car">Car</option>
+                        <option value="motorcycle">Motorcycle</option>
+                        <option value="truck">Truck</option>
+                        <option value="ev">Electric Vehicle</option>
+                    </select>
+                </div>
+                <div class="payment-section">
+                    <h3>Payment Information</h3>
+                    <div class="input-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="expiryDate">Expiry Date</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY">
+                        </div>
+                        <div class="input-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+                <div class="price-display">
+                    <span>Total:</span>
+                    <span id="reservationTotal">₹12.00</span>
+                </div>
+                <button class="primary-btn" onclick="confirmReservation()">Confirm & Pay</button>
+            </div>
+        </div>
+
+        <div id="checkinModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal('checkinModal')">&times;</span>
+                <h2>Check-In to Parking Spot</h2>
+                <div id="checkinDetails">
+                    <!-- Check-in details will be loaded here -->
+                </div>
+                <button class="primary-btn" onclick="completeCheckin()">Confirm Check-In</button>
+            </div>
+        </div>
+
+        <div id="checkoutModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal('checkoutModal')">&times;</span>
+                <h2>Check-Out from Parking Spot</h2>
+                <div id="checkoutDetails">
+                    <!-- Check-out details will be loaded here -->
+                </div>
+                <div class="price-display">
+                    <span>Amount Due:</span>
+                    <span id="checkoutAmount">₹8.50</span>
+                </div>
+                <button class="primary-btn" onclick="completeCheckout()">Confirm Check-Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parking Management System Data
+const pmsData = {
+    parkingLocations: {
+        hyderabad: {
+            name: "Hyderabad",
+            subAreas: {
+                hitechcity: "HITEC City",
+                banjarahills: "Banjara Hills",
+                jubileehills: "Jubilee Hills",
+                secunderabad: "Secunderabad",
+                gachibowli: "Gachibowli"
+            },
+            spots: [],
+            rates: {
+                car: 50,
+                motorcycle: 20,
+                truck: 80,
+                ev: 60
+            }
+        },
+        mumbai: {
+            name: "Mumbai",
+            subAreas: {
+                bandra: "Bandra",
+                andheri: "Andheri",
+                colaba: "Colaba",
+                dadar: "Dadar",
+                juhu: "Juhu"
+            },
+            spots: [],
+            rates: {
+                car: 70,
+                motorcycle: 30,
+                truck: 100,
+                ev: 80
+            }
+        },
+        bangalore: {
+            name: "Bangalore",
+            subAreas: {
+                koramangala: "Koramangala",
+                indiranagar: "Indiranagar",
+                mgroad: "MG Road",
+                whitefield: "Whitefield",
+                marathahalli: "Marathahalli"
+            },
+            spots: [],
+            rates: {
+                car: 60,
+                motorcycle: 25,
+                truck: 90,
+                ev: 70
+            }
+        },
+        delhi: {
+            name: "Delhi",
+            subAreas: {
+                connaughtplace: "Connaught Place",
+                karolbagh: "Karol Bagh",
+                saket: "Saket",
+                noida: "Noida",
+                gurgaon: "Gurgaon"
+            },
+            spots: [],
+            rates: {
+                car: 65,
+                motorcycle: 25,
+                truck: 95,
+                ev: 75
+            }
+        }
+    },
+    reservations: [],
+    activityLog: [],
+    users: [
+        { id: "1", name: "shivani", email: "shivanisheelampally6@gmail.com", password: "shivani1234", isAdmin: true },
+        { id: "2", name: "shravya", email: "shravyapagadala11@gmail.com", password: "shravya1234", isAdmin: true }
+    ],
+    currentUser: null,
+    currentCity: null,
+    currentSubArea: null
+};
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize parking spots for each sub-area in each city
+    Object.keys(pmsData.parkingLocations).forEach(city => {
+        Object.keys(pmsData.parkingLocations[city].subAreas).forEach(subArea => {
+            initializeParkingSpots(city, subArea, 20); // Create 20 parking spots for each sub-area
+        });
+    });
+    
+    loadSampleData();
+    setupEventListeners();
+    
+    // Check if user is already logged in (from sessionStorage)
+    const loggedInUser = sessionStorage.getItem('parkingUser');
+    if (loggedInUser) {
+        pmsData.currentUser = JSON.parse(loggedInUser);
+        showApp();
+    } else {
+        showAuth();
+    }
+});
+
+function initializeParkingSpots(city, subArea, totalSpots) {
+    if (!pmsData.parkingLocations[city].spots[subArea]) {
+        pmsData.parkingLocations[city].spots[subArea] = [];
+    }
+    
+    for (let i = 1; i <= totalSpots; i++) {
+        pmsData.parkingLocations[city].spots[subArea].push({
+            id: i,
+            status: 'available', // available, reserved, occupied, disabled
+            currentReservation: null,
+            type: i <= 2 ? 'ev' : (i <= 5 ? 'motorcycle' : (i <= 18 ? 'car' : 'truck')),
+            lastOccupied: null
+        });
+    }
+}
+
+function loadSampleData() {
+    // Add some sample reservations
+    const now = new Date();
+    const later = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    
+    pmsData.reservations = [
+        {
+            id: 'res001',
+            city: 'hyderabad',
+            subArea: 'hitechcity',
+            spotId: 5,
+            userId: 'user123',
+            licensePlate: 'ABC123',
+            vehicleType: 'car',
+            startTime: now,
+            endTime: later,
+            status: 'active',
+            paymentStatus: 'paid',
+            amount: 100
+        },
+        {
+            id: 'res002',
+            city: 'mumbai',
+            subArea: 'bandra',
+            spotId: 12,
+            userId: 'user123',
+            licensePlate: 'XYZ789',
+            vehicleType: 'motorcycle',
+            startTime: now,
+            endTime: later,
+            status: 'active',
+            paymentStatus: 'paid',
+            amount: 60
+        }
+    ];
+    
+    // Update spot statuses based on reservations
+    pmsData.reservations.forEach(res => {
+        const city = pmsData.parkingLocations[res.city];
+        if (city && city.spots[res.subArea]) {
+            const spot = city.spots[res.subArea].find(s => s.id === res.spotId);
+            if (spot) {
+                spot.status = 'reserved';
+                spot.currentReservation = res.id;
+            }
+        }
+    });
+    
+    // Add some occupied spots (no reservation, manually marked)
+    if (pmsData.parkingLocations.hyderabad.spots['hitechcity']) {
+        pmsData.parkingLocations.hyderabad.spots['hitechcity'][7].status = 'occupied';
+        pmsData.parkingLocations.hyderabad.spots['hitechcity'][7].lastOccupied = new Date(now.getTime() - 30 * 60 * 1000);
+    }
+    
+    if (pmsData.parkingLocations.mumbai.spots['bandra']) {
+        pmsData.parkingLocations.mumbai.spots['bandra'][3].status = 'occupied';
+        pmsData.parkingLocations.mumbai.spots['bandra'][3].lastOccupied = new Date(now.getTime() - 45 * 60 * 1000);
+    }
+    
+    // Add some sample activity log entries
+    pmsData.activityLog = [
+        {
+            timestamp: new Date(now.getTime() - 60 * 60 * 1000),
+            city: 'hyderabad',
+            subArea: 'hitechcity',
+            spotId: 5,
+            action: 'reservation_created',
+            userId: 'user123'
+        },
+        {
+            timestamp: new Date(now.getTime() - 45 * 60 * 1000),
+            city: 'hyderabad',
+            subArea: 'hitechcity',
+            spotId: 7,
+            action: 'marked_occupied',
+            userId: 'admin'
+        },
+        {
+            timestamp: new Date(now.getTime() - 30 * 60 * 1000),
+            city: 'mumbai',
+            subArea: 'bandra',
+            spotId: 12,
+            action: 'reservation_created',
+            userId: 'user123'
+        }
+    ];
+    
+    // Update stats
+    updateStats();
+}
+
+function setupEventListeners() {
+    // View toggle buttons
+    document.getElementById('userViewBtn').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('adminViewBtn').classList.remove('active');
+        document.getElementById('userView').classList.add('active');
+        document.getElementById('adminView').classList.remove('active');
+        renderUserReservations(); // Load reservations when switching to user view
+    });
+    
+    document.getElementById('adminViewBtn').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('userViewBtn').classList.remove('active');
+        document.getElementById('adminView').classList.add('active');
+        document.getElementById('userView').classList.remove('active');
+        renderAdminTables();
+    });
+    
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            renderParkingMap(this.dataset.filter);
+        });
+    });
+    
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+}
+
+// Auth Functions
+function showAuth() {
+    document.getElementById('authContainer').classList.remove('hidden');
+    document.getElementById('appContainer').classList.add('hidden');
+    showLogin();
+}
+
+function showApp() {
+    document.getElementById('authContainer').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    
+    // Hide all view buttons first
+    document.getElementById('userViewBtn').style.display = 'none';
+    document.getElementById('adminViewBtn').style.display = 'none';
+    
+    // Show appropriate view based on user role
+    if (pmsData.currentUser.isAdmin) {
+        // Show only admin view and admin button
+        document.getElementById('adminViewBtn').style.display = 'inline-block';
+        document.getElementById('adminView').classList.add('active');
+        document.getElementById('userView').classList.remove('active');
+        
+        // Make sure admin button is active
+        document.getElementById('adminViewBtn').classList.add('active');
+        document.getElementById('userViewBtn').classList.remove('active');
+        
+        // Load admin data
+        renderAdminTables();
+    } else {
+        // Show only user view and user button
+        document.getElementById('userViewBtn').style.display = 'inline-block';
+        document.getElementById('userView').classList.add('active');
+        document.getElementById('adminView').classList.remove('active');
+        
+        // Make sure user button is active
+        document.getElementById('userViewBtn').classList.add('active');
+        document.getElementById('adminViewBtn').classList.remove('active');
+        
+        // Load user data
+        renderUserReservations();
+    }
+    
+    updateCurrentDateTime();
+    
+    // Set interval to update time every minute
+    setInterval(updateCurrentDateTime, 60000);
+}
+
+function showLogin() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+}
+
+function showSignup() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('signupForm').classList.remove('hidden');
+}
+
+function login() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    
+    if (!email || !password) {
+        alert('Please enter both email and password');
+        return;
+    }
+    
+    const user = pmsData.users.find(u => u.email === email && u.password === password);
+    
+    if (!user) {
+        alert('Invalid email or password');
+        return;
+    }
+    
+    pmsData.currentUser = user;
+    sessionStorage.setItem('parkingUser', JSON.stringify(user));
+    showApp();
+}
+
+function signup() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value.trim();
+    const confirmPassword = document.getElementById('signupConfirmPassword').value.trim();
+    
+    if (!name || !email || !password || !confirmPassword) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    if (pmsData.users.some(u => u.email === email)) {
+        alert('Email already registered');
+        return;
+    }
+    
+    const newUser = {
+        id: 'user' + Math.random().toString(36).substr(2, 8),
+        name: name,
+        email: email,
+        password: password,
+        isAdmin: false
+    };
+    
+    pmsData.users.push(newUser);
+    pmsData.currentUser = newUser;
+    sessionStorage.setItem('parkingUser', JSON.stringify(newUser));
+    showApp();
+}
+
+function logout() {
+    pmsData.currentUser = null;
+    sessionStorage.removeItem('parkingUser');
+    showAuth();
+}
+
+function updateCurrentDateTime() {
+    const now = new Date();
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+}
+
+function loadSubAreas() {
+    const citySelect = document.getElementById('citySelect');
+    const subAreaSelect = document.getElementById('subAreaSelect');
+    
+    const selectedCity = citySelect.value;
+    subAreaSelect.innerHTML = '<option value="">-- Select a sub area --</option>';
+    subAreaSelect.disabled = true;
+    
+    if (selectedCity) {
+        const city = pmsData.parkingLocations[selectedCity];
+        if (city) {
+            Object.keys(city.subAreas).forEach(subAreaKey => {
+                const option = document.createElement('option');
+                option.value = subAreaKey;
+                option.textContent = city.subAreas[subAreaKey];
+                subAreaSelect.appendChild(option);
+            });
+            subAreaSelect.disabled = false;
+        }
+    }
+}
+
+function loadParkingForLocation() {
+    const citySelect = document.getElementById('citySelect');
+    const subAreaSelect = document.getElementById('subAreaSelect');
+    
+    const selectedCity = citySelect.value;
+    const selectedSubArea = subAreaSelect.value;
+    
+    if (!selectedCity || !selectedSubArea) {
+        document.getElementById('parkingMap').innerHTML = `
+            <p id="noLocationSelected" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                Please select a city and sub area to view parking spots
+            </p>
+        `;
+        pmsData.currentCity = null;
+        pmsData.currentSubArea = null;
+        return;
+    }
+    
+    pmsData.currentCity = selectedCity;
+    pmsData.currentSubArea = selectedSubArea;
+    renderParkingMap();
+}
+
+function renderUserReservations() {
+    if (!pmsData.currentUser) return;
+    
+    const reservationsContainer = document.getElementById('userReservations');
+    reservationsContainer.innerHTML = '';
+    
+    const now = new Date();
+    
+    // Get reservations for current user, sorted by start time
+    const userReservations = pmsData.reservations
+        .filter(r => r.userId === pmsData.currentUser.id)
+        .sort((a, b) => a.startTime - b.startTime);
+    
+    if (userReservations.length === 0) {
+        reservationsContainer.innerHTML = '<p>No reservations found.</p>';
+        return;
+    }
+    
+    userReservations.forEach(reservation => {
+        const city = pmsData.parkingLocations[reservation.city];
+        const subAreaName = city.subAreas[reservation.subArea];
+        const spot = city.spots[reservation.subArea] ? 
+            city.spots[reservation.subArea].find(s => s.id === reservation.spotId) : null;
+        const spotStatus = spot ? spot.status : 'unknown';
+        const isFutureReservation = reservation.startTime > now;
+        
+        const reservationItem = document.createElement('div');
+        reservationItem.className = 'reservation-item';
+        reservationItem.innerHTML = `
+            <div class="reservation-info">
+                <strong>${city.name} - ${subAreaName} - Spot #${reservation.spotId}</strong> (${reservation.vehicleType})<br>
+                ${reservation.startTime.toLocaleString()} - ${reservation.endTime.toLocaleString()}<br>
+                Status: ${isFutureReservation ? 'Upcoming' : spotStatus} | ₹${reservation.amount.toFixed(2)}
+            </div>
+            <div class="reservation-actions">
+                ${isFutureReservation ? 
+                    `<button class="secondary-btn" onclick="cancelReservation('${reservation.id}')">Cancel</button>` : 
+                 spotStatus === 'reserved' ? 
+                    `<button class="secondary-btn" onclick="startCheckin('${reservation.city}', '${reservation.subArea}', ${reservation.spotId})">Check-In</button>` : 
+                 spotStatus === 'occupied' ? 
+                    `<button class="secondary-btn" onclick="startCheckout('${reservation.city}', '${reservation.subArea}', ${reservation.spotId})">Check-Out</button>` : 
+                    ''}
+            </div>
+        `;
+        
+        reservationsContainer.appendChild(reservationItem);
+    });
+}
+
+function renderParkingMap(filter = 'all') {
+    if (!pmsData.currentCity || !pmsData.currentSubArea) {
+        document.getElementById('parkingMap').innerHTML = `
+            <p id="noLocationSelected" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                Please select a city and sub area to view parking spots
+            </p>
+        `;
+        return;
+    }
+    
+    const parkingMap = document.getElementById('parkingMap');
+    parkingMap.innerHTML = '';
+    
+    const now = new Date();
+    const city = pmsData.parkingLocations[pmsData.currentCity];
+    const subAreaName = city.subAreas[pmsData.currentSubArea];
+    const spots = city.spots[pmsData.currentSubArea] || [];
+    
+    if (spots.length === 0) {
+        parkingMap.innerHTML = `
+            <p style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                No parking spots found for ${city.name} - ${subAreaName}
+            </p>
+        `;
+        return;
+    }
+    
+    spots.forEach(spot => {
+        // Skip if filtered and doesn't match
+        if (filter !== 'all' && spot.status !== filter) return;
+        
+        const spotElement = document.createElement('div');
+        spotElement.className = `parking-spot ${spot.status}`;
+        spotElement.dataset.spotId = spot.id;
+        
+        // Get reservation info if exists
+        let reservationInfo = '';
+        let spotActions = '';
+        
+        if (spot.currentReservation) {
+            const reservation = pmsData.reservations.find(r => r.id === spot.currentReservation);
+            if (reservation) {
+                // Check if reservation is in the future
+                const isFutureReservation = reservation.startTime > now;
+                
+                reservationInfo = `
+                    <div class="spot-info">
+                        ${reservation.licensePlate}<br>
+                        ${reservation.vehicleType}<br>
+                        ${isFutureReservation ? 
+                          `Starts: ${reservation.startTime.toLocaleString()}` : 
+                          `Ends: ${reservation.endTime.toLocaleString()}`}
+                    </div>
+                `;
+                
+                if (reservation.userId === pmsData.currentUser.id) {
+                    if (isFutureReservation) {
+                        spotActions = '<button class="secondary-btn" onclick="cancelReservation(\'' + reservation.id + '\')">Cancel</button>';
+                    } else if (spot.status === 'reserved') {
+                        spotActions = '<button class="secondary-btn" onclick="startCheckin(\'' + pmsData.currentCity + '\', \'' + pmsData.currentSubArea + '\', ' + spot.id + ')">Check-In</button>';
+                    } else if (spot.status === 'occupied') {
+                        spotActions = '<button class="secondary-btn" onclick="startCheckout(\'' + pmsData.currentCity + '\', \'' + pmsData.currentSubArea + '\', ' + spot.id + ')">Check-Out</button>';
+                    }
+                }
+            }
+        }
+        
+        spotElement.innerHTML = `
+            <div class="spot-number">Spot ${spot.id}</div>
+            <div class="spot-status">${spot.status}</div>
+            ${reservationInfo}
+            ${spotActions}
+        `;
+        
+        // Add click event for available spots
+        if (spot.status === 'available') {
+            spotElement.addEventListener('click', () => showReservationModal(spot.id));
+        }
+        
+        parkingMap.appendChild(spotElement);
+    });
+}
+
+function renderAdminTables() {
+    // Render reservations table
+    const reservationsTable = document.getElementById('reservationsTable').querySelector('tbody');
+    reservationsTable.innerHTML = '';
+    
+    pmsData.reservations.forEach(res => {
+        const city = pmsData.parkingLocations[res.city];
+        const subAreaName = city.subAreas[res.subArea];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${city.name} - ${subAreaName}</td>
+            <td>${res.spotId}</td>
+            <td>${res.licensePlate}</td>
+            <td>${res.startTime.toLocaleString()}</td>
+            <td>${res.endTime.toLocaleString()}</td>
+            <td>${res.status}</td>
+            <td>
+                <button class="secondary-btn" onclick="adminCancelReservation('${res.id}')">Cancel</button>
+            </td>
+        `;
+        reservationsTable.appendChild(row);
+    });
+    
+    // Render activity log table
+    const activityLogTable = document.getElementById('activityLogTable').querySelector('tbody');
+    activityLogTable.innerHTML = '';
+    
+    pmsData.activityLog.forEach(log => {
+        const city = pmsData.parkingLocations[log.city];
+        const subAreaName = city.subAreas[log.subArea];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${log.timestamp.toLocaleString()}</td>
+            <td>${city.name} - ${subAreaName}</td>
+            <td>${log.spotId}</td>
+            <td>${log.action.replace('_', ' ')}</td>
+            <td>${log.userId}</td>
+        `;
+        activityLogTable.appendChild(row);
+    });
+}
+
+function updateStats() {
+    // Calculate stats across all locations
+    let totalSpots = 0;
+    let availableSpots = 0;
+    let reservedSpots = 0;
+    let occupiedSpots = 0;
+    
+    Object.values(pmsData.parkingLocations).forEach(city => {
+        Object.values(city.spots).forEach(subAreaSpots => {
+            totalSpots += subAreaSpots.length;
+            availableSpots += subAreaSpots.filter(s => s.status === 'available').length;
+            reservedSpots += subAreaSpots.filter(s => s.status === 'reserved').length;
+            occupiedSpots += subAreaSpots.filter(s => s.status === 'occupied').length;
+        });
+    });
+    
+    // Admin view stats
+    document.getElementById('totalCapacity').textContent = totalSpots;
+    document.getElementById('adminAvailable').textContent = availableSpots;
+    document.getElementById('reservedCount').textContent = reservedSpots;
+    document.getElementById('occupiedCount').textContent = occupiedSpots;
+    
+    // Calculate today's revenue (sample data)
+    const todayRevenue = pmsData.reservations.reduce((sum, res) => sum + res.amount, 0);
+    document.getElementById('revenueToday').textContent = `₹${todayRevenue.toFixed(2)}`;
+}
+
+function findParking() {
+    if (!pmsData.currentCity || !pmsData.currentSubArea) {
+        alert('Please select a city and sub area first');
+        return;
+    }
+    
+    const date = document.getElementById('reservationDate').value;
+    const time = document.getElementById('reservationTime').value;
+    const duration = parseInt(document.getElementById('duration').value);
+    
+    if (!date || !time) {
+        alert('Please select date and time');
+        return;
+    }
+    
+    // Validate future date/time
+    const [year, month, day] = date.split('-');
+    const [hours, minutes] = time.split(':');
+    const selectedDateTime = new Date(year, month - 1, day, hours, minutes);
+    const now = new Date();
+    
+    if (selectedDateTime < now) {
+        alert('Please select a future date and time');
+        return;
+    }
+    
+    const city = pmsData.parkingLocations[pmsData.currentCity];
+    const spots = city.spots[pmsData.currentSubArea] || [];
+    
+    // Filter available spots that don't have overlapping reservations
+    const availableSpots = spots.filter(spot => {
+        // Check if spot is available
+        if (spot.status !== 'available') return false;
+        
+        // Check if spot has any overlapping reservations
+        const overlappingReservation = pmsData.reservations.find(res => {
+            return res.city === pmsData.currentCity && 
+                   res.subArea === pmsData.currentSubArea &&
+                   res.spotId === spot.id && 
+                   !(selectedDateTime >= res.endTime || 
+                     (selectedDateTime.getTime() + duration * 60 * 60 * 1000) <= res.startTime);
+        });
+        
+        return !overlappingReservation;
+    });
+    
+    if (availableSpots.length === 0) {
+        alert('No available parking spots for the selected time');
+        return;
+    }
+    
+    // Show the first available spot in modal
+    showReservationModal(availableSpots[0].id, duration);
+}
+
+function showReservationModal(spotId, duration = 1) {
+    if (!pmsData.currentCity || !pmsData.currentSubArea) return;
+    
+    const city = pmsData.parkingLocations[pmsData.currentCity];
+    const subAreaName = city.subAreas[pmsData.currentSubArea];
+    const spots = city.spots[pmsData.currentSubArea] || [];
+    const spot = spots.find(s => s.id === spotId);
+    if (!spot) return;
+    
+    const reservationDate = document.getElementById('reservationDate').value;
+    const reservationTime = document.getElementById('reservationTime').value;
+    
+    // Parse the selected date and time
+    const [year, month, day] = reservationDate.split('-');
+    const [hours, minutes] = reservationTime.split(':');
+    const startTime = new Date(year, month - 1, day, hours, minutes);
+    const endTime = new Date(startTime.getTime() + duration * 60 * 60 * 1000);
+    
+    const rate = city.rates[spot.type];
+    const total = rate * duration;
+    
+    document.getElementById('reservationDetails').innerHTML = `
+        <div class="reservation-summary">
+            <p><strong>${city.name} - ${subAreaName} - Spot #${spot.id}</strong> (${spot.type})</p>
+            <p>Date: ${startTime.toLocaleDateString()}</p>
+            <p>Time: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}</p>
+            <p>Duration: ${duration} hour${duration !== 1 ? 's' : ''}</p>
+            <p>Rate: ₹${rate.toFixed(2)}/hour</p>
+        </div>
+    `;
+    
+    document.getElementById('reservationTotal').textContent = `₹${total.toFixed(2)}`;
+    document.getElementById('reservationModal').classList.remove('hidden');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+}
+
+function confirmReservation() {
+    if (!pmsData.currentCity || !pmsData.currentSubArea) return;
+    
+    const licensePlate = document.getElementById('licensePlate').value.trim();
+    const vehicleType = document.getElementById('vehicleType').value;
+    
+    if (!licensePlate) {
+        alert('Please enter license plate number');
+        return;
+    }
+    
+    // Get reservation details from modal
+    const details = document.getElementById('reservationDetails').textContent;
+    const spotIdMatch = details.match(/Spot #(\d+)/);
+    if (!spotIdMatch) return;
+    
+    const spotId = parseInt(spotIdMatch[1]);
+    const city = pmsData.parkingLocations[pmsData.currentCity];
+    const spots = city.spots[pmsData.currentSubArea] || [];
+    const spot = spots.find(s => s.id === spotId);
+    if (!spot) return;
+    
+    // Get the selected date and time from inputs
+    const reservationDate = document.getElementById('reservationDate').value;
+    const reservationTime = document.getElementById('reservationTime').value;
+    const duration = parseInt(document.getElementById('duration').value) || 1;
+    
+    // Parse the selected date and time
+    const [year, month, day] = reservationDate.split('-');
+    const [hours, minutes] = reservationTime.split(':');
+    const startTime = new Date(year, month - 1, day, hours, minutes);
+    const endTime = new Date(startTime.getTime() + duration * 60 * 60 * 1000);
+    
+    const rate = city.rates[spot.type];
+    const amount = rate * duration;
+    
+    const reservationId = 'res' + Math.random().toString(36).substr(2, 8);
+    const now = new Date();
+    
+    // Determine reservation status based on start time
+    const status = startTime > now ? 'pending' : 'active';
+    
+    const newReservation = {
+        id: reservationId,
+        city: pmsData.currentCity,
+        subArea: pmsData.currentSubArea,
+        spotId: spotId,
+        userId: pmsData.currentUser.id,
+        licensePlate: licensePlate,
+        vehicleType: vehicleType,
+        startTime: startTime,
+        endTime: endTime,
+        status: status,
+        paymentStatus: 'paid',
+        amount: amount
+    };
+    
+    pmsData.reservations.push(newReservation);
+    spot.status = 'reserved';
+    spot.currentReservation = reservationId;
+    
+    // Add to activity log
+    pmsData.activityLog.push({
+        timestamp: now,
+        city: pmsData.currentCity,
+        subArea: pmsData.currentSubArea,
+        spotId: spotId,
+        action: 'reservation_created',
+        userId: pmsData.currentUser.id
+    });
+    
+    // Update UI
+    updateStats();
+    renderParkingMap();
+    renderUserReservations();
+    closeModal('reservationModal');
+    
+    // Show success message
+    alert(`Reservation confirmed for ${city.name} - ${city.subAreas[pmsData.currentSubArea]} - Spot #${spotId} from ${startTime.toLocaleString()} to ${endTime.toLocaleString()}`);
+}
+
+function cancelReservation(reservationId) {
+    const reservation = pmsData.reservations.find(r => r.id === reservationId);
+    if (!reservation || reservation.userId !== pmsData.currentUser.id) {
+        alert('Reservation not found or you are not authorized to cancel it');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to cancel this reservation?')) {
+        const city = pmsData.parkingLocations[reservation.city];
+        if (city && city.spots[reservation.subArea]) {
+            const spot = city.spots[reservation.subArea].find(s => s.id === reservation.spotId);
+            if (spot) {
+                spot.status = 'available';
+                spot.currentReservation = null;
+            }
+        }
+        
+        const index = pmsData.reservations.findIndex(r => r.id === reservationId);
+        if (index !== -1) {
+            pmsData.reservations.splice(index, 1);
+        }
+        
+        // Add to activity log
+        pmsData.activityLog.push({
+            timestamp: new Date(),
+            city: reservation.city,
+            subArea: reservation.subArea,
+            spotId: reservation.spotId,
+            action: 'reservation_cancelled',
+            userId: pmsData.currentUser.id
+        });
+        
+        // Update UI
+        updateStats();
+        renderParkingMap();
+        renderUserReservations();
+        
+        alert('Reservation cancelled successfully');
+    }
+}
+
+function startCheckin(cityId, subAreaId, spotId) {
+    const city = pmsData.parkingLocations[cityId];
+    if (!city) return;
+    
+    const spots = city.spots[subAreaId] || [];
+    const spot = spots.find(s => s.id === spotId);
+    if (!spot || spot.status !== 'reserved') return;
+    
+    const reservation = pmsData.reservations.find(r => r.id === spot.currentReservation);
+    if (!reservation || reservation.userId !== pmsData.currentUser.id) return;
+    
+    const now = new Date();
+    if (reservation.startTime > now) {
+        alert('Cannot check in before reservation start time');
+        return;
+    }
+    
+    document.getElementById('checkinDetails').innerHTML = `
+        <div class="checkin-summary">
+            <p><strong>${city.name} - ${city.subAreas[subAreaId]} - Spot #${spot.id}</strong></p>
+            <p>License Plate: ${reservation.licensePlate}</p>
+            <p>Reservation ID: ${reservation.id}</p>
+            <p>Valid until: ${reservation.endTime.toLocaleString()}</p>
+        </div>
+    `;
+    
+    document.getElementById('checkinModal').classList.remove('hidden');
+}
+
+function completeCheckin() {
+    // Get the reservation from the modal details
+    const details = document.getElementById('checkinDetails').textContent;
+    const reservationIdMatch = details.match(/Reservation ID: (\w+)/);
+    if (!reservationIdMatch) return;
+    
+    const reservationId = reservationIdMatch[1];
+    const reservation = pmsData.reservations.find(r => r.id === reservationId);
+    if (!reservation) return;
+    
+    const city = pmsData.parkingLocations[reservation.city];
+    if (!city) return;
+    
+    const spots = city.spots[reservation.subArea] || [];
+    const spot = spots.find(s => s.id === reservation.spotId);
+    if (!spot) return;
+    
+    // Update spot status
+    spot.status = 'occupied';
+    reservation.status = 'active';
+    
+    // Add to activity log
+    pmsData.activityLog.push({
+        timestamp: new Date(),
+        city: reservation.city,
+        subArea: reservation.subArea,
+        spotId: reservation.spotId,
+        action: 'check_in',
+        userId: pmsData.currentUser.id
+    });
+    
+    // Update UI
+    updateStats();
+    renderParkingMap();
+    renderUserReservations();
+    closeModal('checkinModal');
+    
+    alert(`Checked in to ${city.name} - ${city.subAreas[reservation.subArea]} - Spot #${reservation.spotId}!`);
+}
+
+function startCheckout(cityId, subAreaId, spotId) {
+    const city = pmsData.parkingLocations[cityId];
+    if (!city) return;
+    
+    const spots = city.spots[subAreaId] || [];
+    const spot = spots.find(s => s.id === spotId);
+    if (!spot || spot.status !== 'occupied') return;
+    
+    const reservation = pmsData.reservations.find(r => r.id === spot.currentReservation);
+    if (!reservation || reservation.userId !== pmsData.currentUser.id) {
+        // Handle cases where spot is occupied but no reservation exists (manual occupancy)
+        document.getElementById('checkoutDetails').innerHTML = `
+            <div class="checkout-summary">
+                <p><strong>${city.name} - ${city.subAreas[subAreaId]} - Spot #${spot.id}</strong></p>
+                <p>No reservation found</p>
+            </div>
+        `;
+        document.getElementById('checkoutAmount').textContent = '₹0.00';
+    } else {
+        // Calculate amount due based on actual time used
+        const now = new Date();
+        const hoursUsed = Math.ceil((now - reservation.startTime) / (60 * 60 * 1000));
+        const rate = city.rates[reservation.vehicleType];
+        const amountDue = Math.min(hoursUsed * rate, reservation.amount); // Don't charge more than reserved amount
+        
+        document.getElementById('checkoutDetails').innerHTML = `
+            <div class="checkout-summary">
+                <p><strong>${city.name} - ${city.subAreas[subAreaId]} - Spot #${spot.id}</strong></p>
+                <p>License Plate: ${reservation.licensePlate}</p>
+                <p>Reservation ID: ${reservation.id}</p>
+                <p>Parked at: ${reservation.startTime.toLocaleString()}</p>
+            </div>
+        `;
+        document.getElementById('checkoutAmount').textContent = `₹${amountDue.toFixed(2)}`;
+    }
+    
+    document.getElementById('checkoutModal').classList.remove('hidden');
+}
+
+function completeCheckout() {
+    // Get the spot from the modal details
+    const details = document.getElementById('checkoutDetails').textContent;
+    const spotIdMatch = details.match(/Spot #(\d+)/);
+    if (!spotIdMatch) return;
+    
+    const spotId = parseInt(spotIdMatch[1]);
+    const cityNameMatch = details.match(/(Hyderabad|Mumbai|Bangalore|Delhi)/);
+    if (!cityNameMatch) return;
+    
+    const cityId = cityNameMatch[0].toLowerCase();
+    const city = pmsData.parkingLocations[cityId];
+    if (!city) return;
+    
+    const subAreaMatch = details.match(/ - (HITEC City|Banjara Hills|Jubilee Hills|Secunderabad|Gachibowli|Bandra|Andheri|Colaba|Dadar|Juhu|Koramangala|Indiranagar|MG Road|Whitefield|Marathahalli|Connaught Place|Karol Bagh|Saket|Noida|Gurgaon) - /);
+    if (!subAreaMatch) return;
+    
+    const subAreaName = subAreaMatch[1];
+    let subAreaId = '';
+    
+    // Find the subAreaId that matches the subAreaName
+    for (const [key, value] of Object.entries(city.subAreas)) {
+        if (value === subAreaName) {
+            subAreaId = key;
+            break;
+        }
+    }
+    
+    if (!subAreaId) return;
+    
+    const spots = city.spots[subAreaId] || [];
+    const spot = spots.find(s => s.id === spotId);
+    if (!spot) return;
+    
+    const now = new Date();
+    
+    // Add to activity log
+    pmsData.activityLog.push({
+        timestamp: now,
+        city: cityId,
+        subArea: subAreaId,
+        spotId: spotId,
+        action: 'check_out',
+        userId: pmsData.currentUser.id
+    });
+    
+    // Update spot status
+    spot.status = 'available';
+    spot.currentReservation = null;
+    spot.lastOccupied = now;
+    
+    // Update UI
+    updateStats();
+    renderParkingMap();
+    renderUserReservations();
+    closeModal('checkoutModal');
+    
+    alert(`Checked out from ${city.name} - ${subAreaName} - Spot #${spotId}! Thank you for using our parking service.`);
+}
+
+// Admin functions
+function markSpotAsOccupied() {
+    if (!pmsData.currentUser.isAdmin) {
+        alert('Only admin can perform this action');
+        return;
+    }
+    
+    const cityId = prompt("Enter city (hyderabad, mumbai, bangalore, delhi):");
+    if (!cityId || !pmsData.parkingLocations[cityId]) {
+        alert("Invalid city");
+        return;
+    }
+    
+    const subAreaId = prompt("Enter sub area (e.g., hitechcity, bandra, koramangala, connaughtplace):");
+    if (!subAreaId || !pmsData.parkingLocations[cityId].subAreas[subAreaId]) {
+        alert("Invalid sub area");
+        return;
+    }
+    
+    const spotId = prompt("Enter spot number to mark as occupied:");
+    if (!spotId) return;
+    
+    const city = pmsData.parkingLocations[cityId];
+    const spots = city.spots[subAreaId] || [];
+    const spot = spots.find(s => s.id === parseInt(spotId));
+    if (!spot) {
+        alert("Invalid spot number");
+        return;
+    }
+    
+    if (spot.status === 'occupied') {
+        alert("Spot is already occupied");
+        return;
+    }
+    
+    spot.status = 'occupied';
+    spot.lastOccupied = new Date();
+    
+    // Add to activity log
+    pmsData.activityLog.push({
+        timestamp: new Date(),
+        city: cityId,
+        subArea: subAreaId,
+        spotId: spot.id,
+        action: 'marked_occupied',
+        userId: pmsData.currentUser.id
+    });
+    
+    // Update UI
+    updateStats();
+    if (pmsData.currentCity === cityId && pmsData.currentSubArea === subAreaId) {
+        renderParkingMap();
+    }
+    
+    alert(`${city.name} - ${city.subAreas[subAreaId]} - Spot #${spotId} marked as occupied`);
+}
+
+function markSpotAsAvailable() {
+    if (!pmsData.currentUser.isAdmin) {
+        alert('Only admin can perform this action');
+        return;
+    }
+    
+    const cityId = prompt("Enter city (hyderabad, mumbai, bangalore, delhi):");
+    if (!cityId || !pmsData.parkingLocations[cityId]) {
+        alert("Invalid city");
+        return;
+    }
+    
+    const subAreaId = prompt("Enter sub area (e.g., hitechcity, bandra, koramangala, connaughtplace):");
+    if (!subAreaId || !pmsData.parkingLocations[cityId].subAreas[subAreaId]) {
+        alert("Invalid sub area");
+        return;
+    }
+    
+    const spotId = prompt("Enter spot number to mark as available:");
+    if (!spotId) return;
+    
+    const city = pmsData.parkingLocations[cityId];
+    const spots = city.spots[subAreaId] || [];
+    const spot = spots.find(s => s.id === parseInt(spotId));
+    if (!spot) {
+        alert("Invalid spot number");
+        return;
+    }
+    
+    if (spot.status === 'available') {
+        alert("Spot is already available");
+        return;
+    }
+    
+    // If there's a reservation, cancel it
+    if (spot.currentReservation) {
+        const reservationIndex = pmsData.reservations.findIndex(r => r.id === spot.currentReservation);
+        if (reservationIndex !== -1) {
+            pmsData.reservations.splice(reservationIndex, 1);
+        }
+    }
+    
+    spot.status = 'available';
+    spot.currentReservation = null;
+    
+    // Add to activity log
+    pmsData.activityLog.push({
+        timestamp: new Date(),
+        city: cityId,
+        subArea: subAreaId,
+        spotId: spot.id,
+        action: 'marked_available',
+        userId: pmsData.currentUser.id
+    });
+    
+    // Update UI
+    updateStats();
+    if (pmsData.currentCity === cityId && pmsData.currentSubArea === subAreaId) {
+        renderParkingMap();
+    }
+    
+    alert(`${city.name} - ${city.subAreas[subAreaId]} - Spot #${spotId} marked as available`);
+}
+
+function overrideReservation() {
+    if (!pmsData.currentUser.isAdmin) {
+        alert('Only admin can perform this action');
+        return;
+    }
+    
+    const cityId = prompt("Enter city (hyderabad, mumbai, bangalore, delhi):");
+    if (!cityId || !pmsData.parkingLocations[cityId]) {
+        alert("Invalid city");
+        return;
+    }
+    
+    const subAreaId = prompt("Enter sub area (e.g., hitechcity, bandra, koramangala, connaughtplace):");
+    if (!subAreaId || !pmsData.parkingLocations[cityId].subAreas[subAreaId]) {
+        alert("Invalid sub area");
+        return;
+    }
+    
+    const spotId = prompt("Enter spot number to override reservation:");
+    if (!spotId) return;
+    
+    const city = pmsData.parkingLocations[cityId];
+    const spots = city.spots[subAreaId] || [];
+    const spot = spots.find(s => s.id === parseInt(spotId));
+    if (!spot) {
+        alert("Invalid spot number");
+        return;
+    }
+    
+    if (!spot.currentReservation) {
+        alert("No reservation exists for this spot");
+        return;
+    }
+    
+    if (confirm("Are you sure you want to override this reservation?")) {
+        const reservationIndex = pmsData.reservations.findIndex(r => r.id === spot.currentReservation);
+        if (reservationIndex !== -1) {
+            pmsData.reservations.splice(reservationIndex, 1);
+        }
+        
+        spot.status = 'available';
+        spot.currentReservation = null;
+        
+        // Add to activity log
+        pmsData.activityLog.push({
+            timestamp: new Date(),
+            city: cityId,
+            subArea: subAreaId,
+            spotId: spot.id,
+            action: 'reservation_overridden',
+            userId: pmsData.currentUser.id
+        });
+        
+        // Update UI
+        updateStats();
+        renderAdminTables();
+        if (pmsData.currentCity === cityId && pmsData.currentSubArea === subAreaId) {
+            renderParkingMap();
+        }
+        
+        alert(`Reservation for ${city.name} - ${city.subAreas[subAreaId]} - Spot #${spotId} has been overridden`);
+    }
+}
+
+function adminCancelReservation(reservationId) {
+    if (!pmsData.currentUser.isAdmin) {
+        alert('Only admin can perform this action');
+        return;
+    }
+    
+    const reservation = pmsData.reservations.find(r => r.id === reservationId);
+    if (!reservation) return;
+    
+    if (confirm("Are you sure you want to cancel this reservation?")) {
+        const city = pmsData.parkingLocations[reservation.city];
+        if (city && city.spots[reservation.subArea]) {
+            const spot = city.spots[reservation.subArea].find(s => s.id === reservation.spotId);
+            if (spot) {
+                spot.status = 'available';
+                spot.currentReservation = null;
+            }
+        }
+        
+        const reservationIndex = pmsData.reservations.findIndex(r => r.id === reservationId);
+        if (reservationIndex !== -1) {
+            pmsData.reservations.splice(reservationIndex, 1);
+        }
+        
+        // Add to activity log
+        pmsData.activityLog.push({
+            timestamp: new Date(),
+            city: reservation.city,
+            subArea: reservation.subArea,
+            spotId: reservation.spotId,
+            action: 'reservation_cancelled',
+            userId: pmsData.currentUser.id
+        });
+        
+        // Update UI
+        updateStats();
+        renderAdminTables();
+        
+        alert(`Reservation ${reservationId} has been cancelled`);
+    }
+}
+    </script>
+</body>
+</html>
